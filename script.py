@@ -11,6 +11,9 @@ from sklearn.preprocessing import MinMaxScaler
 
 
 # Was useful for viewing some files
+from sklearn.tree import DecisionTreeClassifier
+
+
 def apriori_apply(data):
     from mlxtend.frequent_patterns import apriori
     from mlxtend.frequent_patterns import association_rules
@@ -74,8 +77,11 @@ def test_best_models(data_X, data_y, comment):
     rf = RandomForestClassifier()
     rf.fit(X_train, y_train)
 
-    print('Data "{}" ({}) was tested by the best models. Results are: {}, {}'.format(
-        comment, len(X_test.columns), knn.score(X_test, y_test), rf.score(X_test, y_test)))
+    dt = DecisionTreeClassifier()
+    dt.fit(X_train, y_train)
+
+    print('Data "{}" ({}) was tested by the best models. Results are: {}, {}, {}'.format(
+        comment, len(X_test.columns), knn.score(X_test, y_test), rf.score(X_test, y_test), dt.score(X_test, y_test)))
 
 
 if __name__ == '__main__':
@@ -110,5 +116,10 @@ if __name__ == '__main__':
 
     comment = "Removed attributes deemed not useful by regressions"
     data_X_trim = trim_columns(data_X, ['odor', 'stalk-root', 'spore-print-color'])
+    create_decision_tree(data_X_trim, data_y)
+    test_best_models(data_X_trim, data_y, comment)
+
+    comment = "Only 4 easy regression-decided attributes"
+    data_X_trim = trim_columns(data_X, ['stalk-shape', 'cap-shape', 'gill-color', 'stalk-root'])
     create_decision_tree(data_X_trim, data_y)
     test_best_models(data_X_trim, data_y, comment)
