@@ -14,6 +14,8 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.tree import DecisionTreeClassifier
 
 
+# Was interesting to look at some rules
+# But ultimately, a dead end for our purpose
 def apriori_apply(data):
     from mlxtend.frequent_patterns import apriori
     from mlxtend.frequent_patterns import association_rules
@@ -23,6 +25,7 @@ def apriori_apply(data):
     print(ar)
 
 
+# A must-have check
 def distinct_rows(data):
     # Lets see how many distinct rows we actually have
     distinct = dict()
@@ -48,7 +51,7 @@ def create_decision_tree(data_X, data_y):
                                     filled=True, rounded=True,
                                     special_characters=False)
     graph = graphviz.Source(dot_data)
-    graph.render(comment,view=True)  # Creates a file
+    graph.render('./trees/'+ comment,view=True)  # Creates a file
 
 
 def trim_columns(data_X, keep):
@@ -71,7 +74,7 @@ def test_best_models(data_X, data_y, comment):
     X_train, X_test, y_train, y_test = train_test_split(data_X, data_y, random_state=1337)
 
     # See how well the models do
-    knn = KNeighborsClassifier(n_neighbors=5, leaf_size=10, metric='minkowski', p=1)
+    knn = KNeighborsClassifier(n_neighbors=9, leaf_size=10, metric='minkowski', p=1)
     knn.fit(X_train, y_train)
 
     rf = RandomForestClassifier()
@@ -109,17 +112,41 @@ if __name__ == '__main__':
     data_X = data.drop(['class_e'], axis=1)
 
 
+    # 100% accuracy! But not practical at all: people will need to type all the attributes by hand!
     comment = "Nominal"
     data_X_trim = data_X
     create_decision_tree(data_X_trim, data_y)
     test_best_models(data_X_trim, data_y, comment)
 
+    # Only 3 useful attributes lead to about 99% accuracy! That's great... But thinking realistically,
+    # novice shroomers will be confused, because odor and spore-print-color are somewhat hard to accurately describe
     comment = "Removed attributes deemed not useful by regressions"
     data_X_trim = trim_columns(data_X, ['odor', 'stalk-root', 'spore-print-color'])
     create_decision_tree(data_X_trim, data_y)
     test_best_models(data_X_trim, data_y, comment)
+    # Why not just try aall possible combinations? There are too many, so we use regressions to heavily cut the number
+    # we actually need to check
 
-    comment = "Only 4 easy regression-decided attributes"
-    data_X_trim = trim_columns(data_X, ['stalk-shape', 'cap-shape', 'gill-color', 'stalk-root'])
+    # That's what we are after! Only 95% accuracy, but those 3 attributes are much easier to explain
+    # Initially there was also cap-shape attribute, but it turned out that it is not necessary
+    # Trees are ugly! https://github.com/scikit-learn/scikit-learn/pull/12866
+    comment = "Only 3 easy regression-decided attributes"
+    data_X_trim = trim_columns(data_X, ['stalk-shape', 'gill-color', 'stalk-root'])
     create_decision_tree(data_X_trim, data_y)
     test_best_models(data_X_trim, data_y, comment)
+
+    # Lets check how often every value occurs:
+    print(' ', end='')
+    for c in data_X_trim.columns:
+        print(c + " " + str(sum(data_X_trim[c])), end=', ')
+    print('')
+
+    # Improved variant, with less options to make user interface even simpler
+    # This will be used in the application
+    comment = "Full easy mode"
+    data_X_trim.drop(['gill-color_o', 'gill-color_e', 'gill-color_y', 'gill-color_r'], axis=1, inplace=True)
+    create_decision_tree(data_X_trim, data_y)
+    test_best_models(data_X_trim, data_y, comment)
+
+    print('\nEasy mode columns: ')
+    print(data_X_trim.columns)
