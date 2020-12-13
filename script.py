@@ -3,6 +3,7 @@ import numpy as np
 import sklearn
 from matplotlib import pyplot as plt
 import seaborn as sns
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
@@ -41,8 +42,18 @@ if __name__ == '__main__':
     data_edibility = data['class_e']
     data.drop(['class_e'], axis=1, inplace=True)
 
+    # Drop not-so-important features
+    for c in data.columns:
+        if 'odor' not in c and 'stalk-root' not in c and 'spore-print-color' not in c:
+            data.drop([c], axis=1, inplace=True)
+
     X_train, X_test, y_train, y_test = train_test_split(data, data_edibility, random_state=0)
 
-    knn = KNeighborsClassifier(n_neighbors=100, leaf_size=30, metric='minkowski', p=1)
+    # See how well the models do
+    knn = KNeighborsClassifier(n_neighbors=5, leaf_size=1000, metric='minkowski', p=1)
     knn.fit(X_train, y_train)
     print(knn.score(X_test, y_test))
+
+    rf = RandomForestClassifier()
+    rf.fit(X_train, y_train)
+    print(rf.score(X_test, y_test))
