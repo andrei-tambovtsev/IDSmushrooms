@@ -1,4 +1,6 @@
 import time
+
+import numpy
 import pygame  # python3 -m pip install pygame
 import pygame_widgets  # python3 -m pip install pygame_widgets
 import pickle
@@ -48,8 +50,10 @@ def run_end():
     # Actual ML happens here
     global stage, data, decision
 
-    # TODO STOPSHOP
-    decision = sum(data) % 2
+    temp = numpy.array(data).reshape(1, -1)
+    dec = model.predict_proba(temp)[:, 1]
+
+    decision = 1 if dec >= 0.5 else 0
 
     # Cleanup
     stage = 0

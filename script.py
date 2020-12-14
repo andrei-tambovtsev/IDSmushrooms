@@ -64,9 +64,9 @@ def trim_columns(data_X, keep):
     return ans
 
 
-def test_best_models(data_X, data_y, comment):
+def validate_best_models(data_X, data_y, comment):
     # Split data
-    X_train, X_test, y_train, y_test = train_test_split(data_X, data_y, random_state=1337)
+    X_train, X_val, y_train, y_val = train_test_split(data_X, data_y, random_state=1337)
 
     # See how well the models do
     knn = KNeighborsClassifier(n_neighbors=9, leaf_size=10, metric='minkowski', p=1)
@@ -78,8 +78,8 @@ def test_best_models(data_X, data_y, comment):
     dt = DecisionTreeClassifier()
     dt.fit(X_train, y_train)
 
-    print('Data "{}" ({}) was tested by the best models. Results are: {}, {}, {}'.format(
-        comment, len(X_test.columns), knn.score(X_test, y_test), rf.score(X_test, y_test), dt.score(X_test, y_test)))
+    print('Data "{}" ({}) was validated by the best models. Results are: {}, {}, {}'.format(
+        comment, len(X_val.columns), knn.score(X_val, y_val), rf.score(X_val, y_val), dt.score(X_val, y_val)))
 
 
 if __name__ == '__main__':
@@ -106,19 +106,21 @@ if __name__ == '__main__':
     data_y = data['class_e']
     data_X = data.drop(['class_e'], axis=1)
 
+    data_X, X_test, data_y, y_test = train_test_split(data_X, data_y, random_state=1337)
+
 
     # 100% accuracy! But not practical at all: people will need to type all the attributes by hand!
     comment = "Nominal"
     data_X_trim = data_X
     create_decision_tree(data_X_trim, data_y)
-    test_best_models(data_X_trim, data_y, comment)
+    validate_best_models(data_X_trim, data_y, comment)
 
     # Only 3 useful attributes lead to about 99% accuracy! That's great... But thinking realistically,
     # novice shroomers will be confused, because odor and spore-print-color are somewhat hard to accurately describe
     comment = "Removed attributes deemed not useful by regressions"
     data_X_trim = trim_columns(data_X, ['odor', 'stalk-root', 'spore-print-color'])
     create_decision_tree(data_X_trim, data_y)
-    test_best_models(data_X_trim, data_y, comment)
+    validate_best_models(data_X_trim, data_y, comment)
     # Why not just try aall possible combinations? There are too many, so we use regressions to heavily cut the number
     # we actually need to check
 
@@ -128,7 +130,7 @@ if __name__ == '__main__':
     comment = "Only 3 easy regression-decided attributes"
     data_X_trim = trim_columns(data_X, ['stalk-shape', 'gill-color', 'stalk-root'])
     create_decision_tree(data_X_trim, data_y)
-    test_best_models(data_X_trim, data_y, comment)
+    validate_best_models(data_X_trim, data_y, comment)
 
     # Lets check how often every value occurs:
     print(' ', end='')
@@ -141,13 +143,14 @@ if __name__ == '__main__':
     comment = "Full easy mode"
     data_X_trim.drop(['gill-color_o', 'gill-color_e', 'gill-color_y', 'gill-color_r'], axis=1, inplace=True)
     create_decision_tree(data_X_trim, data_y)
-    test_best_models(data_X_trim, data_y, comment)
+    validate_best_models(data_X_trim, data_y, comment)
 
     print('\nEasy mode columns: ')
     print(data_X_trim.columns)
 
     # Pickling good model to be used in our application
-    dt = DecisionTreeClassifier()
+    dt = RandomForestClassifier()
     dt.fit(data_X_trim, data_y)
     file = open('./pygame/dt-model.pickle', 'wb')
     pickle.dump(dt, file)
+
