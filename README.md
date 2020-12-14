@@ -31,10 +31,10 @@ pygame folder contains programm that was final aim of a project. simple classifi
 pygame folder contains also folder with images, that _main_.py is using for interface.
 
 #### _main_
-code in _main_.py is written on python3, using time library and 3 additional sets of modules that are need to be installed using commands: "pip install pygame", "pip install pygame-widgets" and "pip install pickle-mixin". Aftr installing additional sets coda can be run and it must show graphic interface with questions about mushroom. After answering 3 questions interface show 1 of 2 images that predicts whether mushroom edible or not.
+code in _main_.py is written on python3, using time library and 5 additional sets of modules that are need to be installed using commands: "pip install pygame", "pip install pygame-widgets", "pip install pickle-mixin", "pip install sklearn" and "pip install numpy". Aftr installing additional sets coda can be run and it must show graphic interface with questions about mushroom. After answering 3 questions interface show 1 of 2 images that predicts whether mushroom edible or not.
 
 ### Poster
 B6_poster.pdf is presentation poster with information about project, our aims, methods and acievments. Poster was made using https://lucid.app/ and converted into .pdf format. Poster also contains images of _main_.py and visualization of mushroom parts (from publicly available mushroom tutorial slides https://pt.slideshare.net/rayborg/mushroom-tutorial/) that we choose for our model.
 
-### Conclusin
+### Conclusion
 We hope that our project satisfies all needed criteria. We definitly gained knowledge while working on it. Especially interesting was using regression functions "not properly" (in this bit we went "creative" on how the use tools we learned in this course), to find strongest corellation, encoding 23 columns on dataset into 114 and then reducing used data to 3 most valuable parameters.
