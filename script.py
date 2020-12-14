@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import MinMaxScaler
+import pickle
 
 
 # Was useful for viewing some files
@@ -150,3 +151,9 @@ if __name__ == '__main__':
 
     print('\nEasy mode columns: ')
     print(data_X_trim.columns)
+
+    # Pickling good model to be used in our application
+    dt = DecisionTreeClassifier()
+    dt.fit(data_X_trim, data_y)
+    file = open('./pygame/dt-model.pickle', 'wb')
+    pickle.dump(dt, file)
