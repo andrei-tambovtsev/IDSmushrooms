@@ -1,3 +1,4 @@
+import numpy
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
@@ -82,6 +83,30 @@ def validate_best_models(data_X, data_y, comment):
         comment, len(X_val.columns), knn.score(X_val, y_val), rf.score(X_val, y_val), dt.score(X_val, y_val)))
 
 
+# Calculate and show ROC
+def show_roc(data_X, data_y):
+    rf = RandomForestClassifier()
+    rf.fit(data_X, data_y)
+
+    probs = pd.DataFrame(data=rf.predict_proba(data_X))
+    probs = probs[1]
+    cutoffs = pd.DataFrame({'cutoff': probs.unique()})
+    cutoffs = cutoffs.sort_values(by='cutoff', axis=0)
+    tpr = cutoffs.apply(lambda cut: numpy.sum(numpy.logical_and(probs >= cut[0], data_y == 1)) / numpy.sum(data_y == 1), axis=1)
+    fpr = cutoffs.apply(lambda cut: numpy.sum(numpy.logical_and(probs >= cut[0], data_y == 0)) / numpy.sum(data_y == 0), axis=1)
+    stats = pd.DataFrame({'cutoff': cutoffs.cutoff, 'tpr': tpr, 'fpr': fpr})
+    import matplotlib.pyplot as plt
+    plt.plot(stats.fpr, stats.tpr, 'b')
+    plt.legend(loc='lower right')
+    plt.plot([0, 1], [0, 1], 'r--')
+    plt.xlim([0, 1])
+    plt.ylim([0, 1])
+    plt.ylabel('True Positive Rate')
+    plt.xlabel('False Positive Rate')
+    plt.title("ROC of RandomForestClassifier")
+    plt.show()
+
+
 if __name__ == '__main__':
     # Loading data
     data = pd.read_csv('mushrooms.csv')
@@ -105,9 +130,6 @@ if __name__ == '__main__':
 
     data_y = data['class_e']
     data_X = data.drop(['class_e'], axis=1)
-
-    data_X, X_test, data_y, y_test = train_test_split(data_X, data_y, random_state=1337)
-
 
     # 100% accuracy! But not practical at all: people will need to type all the attributes by hand!
     comment = "Nominal"
@@ -149,8 +171,10 @@ if __name__ == '__main__':
     print(data_X_trim.columns)
 
     # Pickling good model to be used in our application
-    dt = RandomForestClassifier()
-    dt.fit(data_X_trim, data_y)
+    rf = RandomForestClassifier()
+    rf.fit(data_X_trim, data_y)
     file = open('./pygame/dt-model.pickle', 'wb')
-    pickle.dump(dt, file)
+    pickle.dump(rf, file)
 
+    # Calculate ROC
+    show_roc(data_X_trim, data_y)
