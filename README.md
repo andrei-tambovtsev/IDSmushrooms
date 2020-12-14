@@ -4,7 +4,8 @@
 
 ### Overview
 Repository contains files needed for Data Science project
-Project idea is to train MachineLearning models and finding interesting correlations in mushrooms.cvs dataset from kaggle (https://www.kaggle.com/uciml/mushroom-classification)
+Project idea is to train a machine learning model to help novice mushroom hunters models and (possibly) finding some interesting correlations for the same goal.
+We used mushrooms.cvs dataset from kaggle (https://www.kaggle.com/uciml/mushroom-classification)
 Original dataset included in repository main branch
 
 ### B6_report
@@ -15,11 +16,13 @@ KAGGLE-EDIBILITY-OF-MUSHROOMS.ipynb is jupyter notebook file, that contains comm
 
 ### Script
 script.py is python3 file, that contains code to train K-nearest-neighbors and RandomForestClassifier algorithms from sklearn library and obsereve their prediction score. Script was also included in KAGGLE-EDIBILITY-OF-MUSHROOMS.ipynb with additional comments.
+It also creates a trained model to be used in the pygame program.
+
+### Program (pygame)
+Proof of concept of a software, that helps novice mushroom hunters. Made to be reasonably easy to modify, if we decide to change criteria used.
 
 ### Trees
 trees folder contains .pdf files with visualization on decision tree classifier, implemented on mushrooms.cvs dataset. Each .pdf file contains decision tree with different attribute sets
-
-### Pygame
 
 #### folder
 pygame folder contains programm that was final aim of a project. simple classification code that can predict edability of mushroom based on 3 easy recognizable attributes of mushroom (stalk shape, stalk root and gill color)
@@ -34,4 +37,4 @@ code in _main_.py is written on python3, using time library and 3 additional set
 B6_poster.pdf is presentation poster with information about project, our aims, methods and acievments. Poster was made using https://lucid.app/ and converted into .pdf format. Poster also contains images of _main_.py and visualization of mushroom parts (from publicly available mushroom tutorial slides https://pt.slideshare.net/rayborg/mushroom-tutorial/) that we choose for our model.
 
 ### Conclusin
-We hope that our project satisfies all neede criteria. We definitly got new knowledges working on it. Especially interesting was using regression functions "not properly", to find strongest corellation, encoding 23 columns on dataset into 114 and then reducing used data to 3 most valuable parameters.
+We hope that our project satisfies all needed criteria. We definitly gained knowledge while working on it. Especially interesting was using regression functions "not properly" (in this bit we went "creative" on how the use tools we learned in this course), to find strongest corellation, encoding 23 columns on dataset into 114 and then reducing used data to 3 most valuable parameters.
