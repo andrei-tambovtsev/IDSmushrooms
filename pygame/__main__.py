@@ -51,9 +51,9 @@ def run_end():
     global stage, data, decision
 
     temp = numpy.array(data).reshape(1, -1)
-    dec = model.predict_proba(temp)[:, 1]
+    dec = model.predict_proba(temp)[:, 1]   # Get score for data
 
-    decision = 1 if dec >= 0.5 else 0
+    decision = 1 if dec >= 0.82847 else 0  # We had picked a cutoff for our purposes
 
     # Cleanup
     stage = 0
